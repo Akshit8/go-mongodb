@@ -1,2 +1,2 @@
-# go-monogdb
+# go-mongodb
 mongodb quickstart for go
