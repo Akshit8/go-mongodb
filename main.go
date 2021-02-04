@@ -7,6 +7,8 @@ import (
 	"os"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"go.mongodb.org/mongo-driver/bson"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,6 +51,7 @@ func main() {
 	episodeCollection = quickStartDatabase.Collection(episodeCollectionName)
 
 	fmt.Println("Inserting documents")
+	// InsertingDocuments(ctx)
 
 	fmt.Println("Listing all documents")
 	listAllDocuments(ctx)
@@ -59,8 +62,17 @@ func main() {
 	fmt.Println("Querying database")
 	queryingDocuments(ctx)
 
-	fmt.Println("Sorting Documents In Query")
+	fmt.Println("Sorting documents in query")
 	sortingDocumentsInQuery(ctx)
+
+	fmt.Println("update one document in query")
+	// updateOneDocument(ctx)
+
+	fmt.Println("updated many documents in query")
+	// updateManyDocuments(ctx)
+
+	fmt.Println("replacing one documents in query")
+	replaceOne(ctx)
 }
 
 func listDatabases(ctx context.Context, client *mongo.Client) {
@@ -159,4 +171,53 @@ func sortingDocumentsInQuery(ctx context.Context) {
 		}
 		fmt.Println(episode)
 	}
+}
+
+func updateOneDocument(ctx context.Context) {
+	id, err := primitive.ObjectIDFromHex("601ad97ed8880f320dd66dc8")
+	if err != nil {
+		log.Fatal("error converting string to id: ", err)
+	}
+	result, err := podcastCollection.UpdateOne(
+		ctx,
+		bson.M{"_id": id},
+		bson.D{
+			{"$set", bson.D{
+				{"author", "updated Akshit Sadana"},
+			}},
+		},
+	)
+	if err != nil {
+		log.Fatal("error updating the document:", err)
+	}
+	fmt.Printf("updated %d Documents\n", result.ModifiedCount)
+}
+
+func updateManyDocuments(ctx context.Context) {
+	result, err := episodeCollection.UpdateMany(
+		ctx,
+		bson.M{"duration": 25},
+		bson.D{
+			{"$set", bson.D{{"duration", 34}}},
+		},
+	)
+	if err != nil {
+		log.Fatal("error updating many docs: ", err)
+	}
+	fmt.Printf("updated %d Documents\n", result.ModifiedCount)
+}
+
+func replaceOne(ctx context.Context) {
+	result, err := podcastCollection.ReplaceOne(
+		ctx,
+		bson.M{"author": "updated Akshit Sadana"},
+		bson.M{
+			"title":  "The Akshit Sadana Show",
+			"author": "Akshit Sadana",
+		},
+	)
+	if err != nil {
+		log.Fatal("error replacing doc: ", err)
+	}
+	fmt.Printf("Replaced %v Document\n", result.ModifiedCount)
 }
