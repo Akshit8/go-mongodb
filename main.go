@@ -54,16 +54,16 @@ func main() {
 	// InsertingDocuments(ctx)
 
 	fmt.Println("Listing all documents")
-	listAllDocuments(ctx)
+	// listAllDocuments(ctx)
 
 	fmt.Println("Getting single document")
-	getSingleDocument(ctx)
+	// getSingleDocument(ctx)
 
 	fmt.Println("Querying database")
-	queryingDocuments(ctx)
+	// queryingDocuments(ctx)
 
 	fmt.Println("Sorting documents in query")
-	sortingDocumentsInQuery(ctx)
+	// sortingDocumentsInQuery(ctx)
 
 	fmt.Println("update one document in query")
 	// updateOneDocument(ctx)
@@ -72,7 +72,16 @@ func main() {
 	// updateManyDocuments(ctx)
 
 	fmt.Println("replacing one documents in query")
-	replaceOne(ctx)
+	// replaceOne(ctx)
+
+	fmt.Println("deleting one documents in query")
+	// deleteOne(ctx)
+
+	fmt.Println("deleting many documents in query")
+	// deleteMany(ctx)
+
+	fmt.Println("dropping collections")
+	droppingCollections(ctx)
 }
 
 func listDatabases(ctx context.Context, client *mongo.Client) {
@@ -219,5 +228,39 @@ func replaceOne(ctx context.Context) {
 	if err != nil {
 		log.Fatal("error replacing doc: ", err)
 	}
-	fmt.Printf("Replaced %v Document\n", result.ModifiedCount)
+	fmt.Printf("Replaced %d Document\n", result.ModifiedCount)
+}
+
+func deleteOne(ctx context.Context) {
+	result, err := podcastCollection.DeleteOne(
+		ctx,
+		bson.M{"title": "The Akshit Sadana Show"},
+	)
+	if err != nil {
+		log.Fatal("error deleting one document: ", err)
+	}
+	fmt.Printf("DeleteOne removed %d document", result.DeletedCount)
+}
+
+func deleteMany(ctx context.Context) {
+	result, err := episodeCollection.DeleteMany(
+		ctx,
+		bson.M{"duration": bson.D{{"$gt", 25}}},
+	)
+	if err != nil {
+		log.Fatal("error deleting many document: ", err)
+	}
+	fmt.Printf("DeleteMany removed %d document", result.DeletedCount)
+}
+
+func droppingCollections(ctx context.Context) {
+	err := podcastCollection.Drop(ctx)
+	if err != nil {
+		log.Fatal("error deleting collection: ", err)
+	}
+
+	err = episodeCollection.Drop(ctx)
+	if err != nil {
+		log.Fatal("error deleting collection: ", err)
+	}
 }
