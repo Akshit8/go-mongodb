@@ -19,6 +19,11 @@ var (
 	episodeCollectionName = "episodes"
 )
 
+var (
+	podcastCollection *mongo.Collection
+	episodeCollection *mongo.Collection
+)
+
 func main() {
 	mongoURI := os.Getenv("MONGODB_CONNECTION_STRING")
 
@@ -35,18 +40,38 @@ func main() {
 	}
 	defer client.Disconnect(ctx)
 
-	// Listing all databases
+	fmt.Println("Listing all databases")
+	listDatabases(ctx, client)
+
+	// connecting to db quickstart
+	quickStartDatabase := client.Database(dbname)
+	podcastCollection = quickStartDatabase.Collection(podcastCollectionName)
+	episodeCollection = quickStartDatabase.Collection(episodeCollectionName)
+
+	fmt.Println("Inserting documents")
+
+	fmt.Println("Listing all documents")
+	listAllDocuments(ctx)
+
+	fmt.Println("Getting single document")
+	getSingleDocument(ctx)
+
+	fmt.Println("Querying database")
+	queryingDocuments(ctx)
+
+	fmt.Println("Sorting Documents In Query")
+	sortingDocumentsInQuery(ctx)
+}
+
+func listDatabases(ctx context.Context, client *mongo.Client) {
 	databases, err := client.ListDatabaseNames(ctx, bson.M{})
 	if err != nil {
 		log.Fatal("error retrieving databases list")
 	}
 	fmt.Println(databases)
+}
 
-	// connecting to db quickstart
-	quickStartDatabse := client.Database(dbname)
-	podcastCollection := quickStartDatabse.Collection(podcastCollectionName)
-	episodeCollection := quickStartDatabse.Collection(episodeCollectionName)
-
+func InsertingDocuments(ctx context.Context) {
 	podcastResult, err := podcastCollection.InsertOne(ctx, bson.D{
 		{"title", "The Developer Podcast"},
 		{"author", "Akshit Sadana"},
@@ -75,4 +100,63 @@ func main() {
 	}
 
 	fmt.Printf("Inserted %d documents to episode collection\n", len(episodeResult.InsertedIDs))
+}
+
+func listAllDocuments(ctx context.Context) {
+	cursor, err := episodeCollection.Find(ctx, bson.M{})
+	if err != nil {
+		log.Fatal("error listing all documents: ", err)
+	}
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		var episode bson.M
+		err = cursor.Decode(&episode)
+		if err != nil {
+			log.Fatal("error decoding cursor: ", err)
+		}
+		fmt.Println(episode)
+	}
+}
+
+func getSingleDocument(ctx context.Context) {
+	var podcast bson.M
+	err := podcastCollection.FindOne(ctx, bson.M{}).Decode(&podcast)
+	if err != nil {
+		log.Fatal("error decoding single podcast: ", err)
+	}
+	fmt.Println(podcast)
+}
+
+func queryingDocuments(ctx context.Context) {
+	filterCursor, err := episodeCollection.Find(ctx, bson.M{"duration": 25})
+	if err != nil {
+		log.Fatal("err querying db: ", err)
+	}
+	defer filterCursor.Close(ctx)
+	for filterCursor.Next(ctx) {
+		var episode bson.M
+		err = filterCursor.Decode(&episode)
+		if err != nil {
+			log.Fatal("error decoding filtered episode: ", err)
+		}
+		fmt.Println(episode)
+	}
+}
+
+func sortingDocumentsInQuery(ctx context.Context) {
+	opts := options.Find()
+	opts.SetSort(bson.D{{"duration", -1}})
+	sortCursor, err := episodeCollection.Find(ctx, bson.D{{"duration", bson.D{{"$gt", 24}}}})
+	if err != nil {
+		log.Fatal("err sorting query db: ", err)
+	}
+	defer sortCursor.Close(ctx)
+	for sortCursor.Next(ctx) {
+		var episode bson.M
+		err = sortCursor.Decode(&episode)
+		if err != nil {
+			log.Fatal("error decoding filtered episode: ", err)
+		}
+		fmt.Println(episode)
+	}
 }
