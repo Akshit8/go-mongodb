@@ -16,4 +16,6 @@
 
 # Jetbrains
 .idea
-/.env
+
+# go sdk
+.golangci.yml
