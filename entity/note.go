@@ -9,6 +9,7 @@ type Note struct {
 	NoteID      string    `json:"noteId" bson:"_id"`
 	Title       string    `json:"title" bson:"title"`
 	Description string    `json:"description" bson:"description"`
+	Tags        *[]string `json:"tags" bson:"tags"`
 	Completed   bool      `json:"completed" bson:"completed"`
 	CreatedAt   time.Time `json:"createdAt" bson:"createdAt"`
 	UpdatedAt   time.Time `json:"UpdatedAt" bson:"UpdatedAt"`
