@@ -1,11 +1,12 @@
 package mongo
 
 import (
-	"github.com/Akshit8/go-mongodb/config"
 	"log"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/Akshit8/go-mongodb/config"
 )
 
 var noteRepo NoteRepository
