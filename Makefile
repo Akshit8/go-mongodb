@@ -23,12 +23,11 @@ install:
 	@echo "installing external dependencies"
 	go mod download
 
-graphql:
-	@echo "generating graphql stubs"
-	go run github.com/99designs/gqlgen generate
-
 run:
 	 go run cmd/main.go
 
-dev:
+dev-up:
 	docker-compose -f dev.yml up -d
+
+dev-down:
+	docker-compose -f dev.yml down

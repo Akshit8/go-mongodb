@@ -3,7 +3,7 @@ version: "3.7"
 services:
   mongo:
     image: mongo
-    container_name: mongodb
+    container_name: mongodb-1
     restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
@@ -15,7 +15,7 @@ services:
 
   mongo-ui:
     image: mongo-express
-    container_name: mongo-ui
+    container_name: mongo-ui-1
     restart: unless-stopped
     environment:
       ME_CONFIG_MONGODB_PORT: 27017

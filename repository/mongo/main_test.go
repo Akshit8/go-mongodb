@@ -13,7 +13,7 @@ var noteRepo NoteRepository
 
 func TestMain(m *testing.M) {
 	var appConfig config.AppConfig
-	err := config.LoadConfig("../../../config", &appConfig)
+	err := config.LoadConfig("../../config", &appConfig)
 	if err != nil {
 		log.Fatalln("error loading config: ", err)
 	}

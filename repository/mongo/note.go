@@ -81,7 +81,26 @@ func (n *noteRepository) GetNoteByID(noteID string) (*entity.Note, error) {
 }
 
 func (n *noteRepository) GetNotes() ([]*entity.Note, error) {
-	return nil, nil
+	ctx, cancel := n.getContext()
+	defer cancel()
+
+	collection := n.getNoteCollection()
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	var result []*entity.Note
+	for cursor.Next(ctx) {
+		var note entity.Note
+		if err := cursor.Decode(&note); err != nil {
+			return nil, err
+		}
+		result = append(result, &note)
+	}
+
+	return result, nil
 }
 
 // updateOne is generic function to update one note

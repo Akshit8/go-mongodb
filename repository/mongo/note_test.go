@@ -71,6 +71,10 @@ func TestGetNoteByID(t *testing.T) {
 	wg.Wait()
 }
 
+func TestGetNotes(t *testing.T) {
+	t.Parallel()
+}
+
 func TestUpdateNoteByID(t *testing.T) {
 	t.Parallel()
 
