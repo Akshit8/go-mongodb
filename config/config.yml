@@ -1,2 +1,4 @@
 MONGO_URI: mongodb://root:rootpassword@localhost:27017
+
+DB_NAME: mongo_test
 NOTES_TABLE: notes

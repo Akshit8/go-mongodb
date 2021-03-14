@@ -7,6 +7,7 @@ import (
 // AppConfig stores all configuration of the application.
 type AppConfig struct {
 	MongoURI   string `mapstructure:"MONGO_URI"`
+	DBName     string `mapstructure:"DB_NAME"`
 	NotesTable string `mapstructure:"NOTES_TABLE"`
 }
 
