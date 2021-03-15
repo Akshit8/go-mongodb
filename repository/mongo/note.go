@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-
 	"time"
 
 	"github.com/Akshit8/go-mongodb/entity"

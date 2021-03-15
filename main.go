@@ -4,16 +4,15 @@ import (
 	"log"
 	"time"
 
-	"github.com/Akshit8/go-mongodb/repository/mongo"
-
 	"github.com/Akshit8/go-mongodb/config"
+	"github.com/Akshit8/go-mongodb/repository/mongo"
 )
 
 var noteRepo mongo.NoteRepository
 
 func main() {
 	var appConfig config.AppConfig
-	err := config.LoadConfig("cmd/config", &appConfig)
+	err := config.LoadConfig("config", &appConfig)
 	if err != nil {
 		log.Fatalln("error loading config: ", err)
 	}

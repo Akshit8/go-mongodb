@@ -2,10 +2,11 @@
 package random
 
 import (
-	"github.com/google/uuid"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const alphabets = "abcdefghijklmnopqrstuvwxyz"

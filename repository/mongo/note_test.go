@@ -1,13 +1,13 @@
 package mongo
 
 import (
-	"github.com/Akshit8/go-mongodb/entity"
-	"github.com/Akshit8/go-mongodb/random"
-	"github.com/stretchr/testify/require"
-
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/Akshit8/go-mongodb/entity"
+	"github.com/Akshit8/go-mongodb/random"
+	"github.com/stretchr/testify/require"
 )
 
 func createRandomNote(t *testing.T) entity.Note {
