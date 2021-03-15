@@ -13,17 +13,29 @@ The purpose of creating this sand-box is
 - easy migration of db layer if required.
 
 ## Folder specs
-- **.github** - 
-- **config** -
-- **entity** -
-- **random** -
-- **repository/mongo** -
+- **.github** - contains action workflows and repository assets.
+- **config** - manages application configuration and environment variables.
+- **entity** - contains entities of all logical constituents.
+- **random** - functions to generate random data like string, integers etc.
+- **repository/mongo** - implementation of mongo client, CRUD ops on all entities, unit testing of all CRUD functions.
 
 ## A note on update operation
+If you have noticed `updateOne()`, instead of updating specific fields, the `updateOne()` function take the complete updated entity and replaces it against a given matching parameter.
+<br><br>
+This is useful as it
+- makes update operation consistent
+- independent of any kind of persistence implementation(Sql, NoSql, Message-Ques, Cache).
+- can handle update on large number of fields simultaneously.
+- compatible with event-driven architectures.
 
 ## Using UUID instead of ObjectID.
+I have chosen to use UUID as slug instead of objectID as it is only native to Mongodb and adds lots of conversion and validation related code. Using UUID makes all this excess code disappear.
 
 ## Running tests parallely
+```go
+t.Parallel()
+```
+the above snippet makes the enclosing test function in a separate go-routine.
 
 ## References
 [passing-data-to-goroutines](https://stackoverflow.com/questions/40326723/go-vet-range-variable-captured-by-func-literal-when-using-go-routine-inside-of-f)
