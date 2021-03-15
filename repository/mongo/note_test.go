@@ -11,6 +11,16 @@ import (
 )
 
 func createRandomNote(t *testing.T) entity.Note {
+	newNote := getRandomNote()
+
+	err := noteRepo.CreateNote(&newNote)
+
+	require.NoError(t, err)
+
+	return newNote
+}
+
+func getRandomNote() entity.Note {
 	newNote := entity.Note{
 		NoteID:      random.GetRandomUUID(),
 		Title:       random.GetRandomString(8),
@@ -20,10 +30,6 @@ func createRandomNote(t *testing.T) entity.Note {
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
-
-	err := noteRepo.CreateNote(&newNote)
-
-	require.NoError(t, err)
 
 	return newNote
 }
@@ -54,7 +60,7 @@ func TestGetNoteByID(t *testing.T) {
 
 	var wg sync.WaitGroup
 	wg.Add(4)
-	// creating 4 random notes concurrently
+	// getting notes by id concurrently
 	for _, note := range notesList {
 		go func(note entity.Note) {
 			retrievedNote, err := noteRepo.GetNoteByID(note.NoteID)
@@ -73,6 +79,23 @@ func TestGetNoteByID(t *testing.T) {
 
 func TestGetNotes(t *testing.T) {
 	t.Parallel()
+
+	for i := 0; i < 4; i++ {
+		newNote := getRandomNote()
+		newNote.Title = "twitch"
+
+		err := noteRepo.CreateNote(&newNote)
+
+		require.NoError(t, err)
+	}
+
+	var notes []*entity.Note
+
+	notes, err := noteRepo.GetNotes()
+
+	require.NoError(t, err)
+	require.NotEmpty(t, notes)
+	require.Len(t, notes, 4)
 }
 
 func TestUpdateNoteByID(t *testing.T) {

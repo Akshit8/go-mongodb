@@ -84,7 +84,7 @@ func (n *noteRepository) GetNotes() ([]*entity.Note, error) {
 	defer cancel()
 
 	collection := n.getNoteCollection()
-	cursor, err := collection.Find(ctx, bson.M{})
+	cursor, err := collection.Find(ctx, bson.M{"title": "twitch"})
 	if err != nil {
 		return nil, err
 	}
