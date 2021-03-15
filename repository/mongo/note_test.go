@@ -77,12 +77,12 @@ func TestGetNoteByID(t *testing.T) {
 	wg.Wait()
 }
 
-func TestGetNotes(t *testing.T) {
+func TestGetCompleteNotes(t *testing.T) {
 	t.Parallel()
 
 	for i := 0; i < 4; i++ {
 		newNote := getRandomNote()
-		newNote.Title = "twitch"
+		newNote.Completed = true
 
 		err := noteRepo.CreateNote(&newNote)
 
@@ -91,11 +91,14 @@ func TestGetNotes(t *testing.T) {
 
 	var notes []*entity.Note
 
-	notes, err := noteRepo.GetNotes()
+	notes, err := noteRepo.GetCompletedNotes()
 
 	require.NoError(t, err)
-	require.NotEmpty(t, notes)
-	require.Len(t, notes, 4)
+
+	for _, note := range notes {
+		require.Equal(t, note.Completed, true)
+	}
+
 }
 
 func TestUpdateNoteByID(t *testing.T) {
@@ -104,6 +107,7 @@ func TestUpdateNoteByID(t *testing.T) {
 	newNote := createRandomNote(t)
 
 	newNote.Completed = true
+	newNote.UpdatedAt = time.Now()
 	err := noteRepo.UpdateNoteByID(&newNote)
 
 	require.NoError(t, err)

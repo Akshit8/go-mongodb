@@ -14,7 +14,7 @@ import (
 type NoteRepository interface {
 	CreateNote(newNote *entity.Note) error
 	GetNoteByID(noteID string) (*entity.Note, error)
-	GetNotes() ([]*entity.Note, error)
+	GetCompletedNotes() ([]*entity.Note, error)
 	UpdateNoteByID(updatedNote *entity.Note) error
 	DeleteNoteByID(noteID string) error
 }
@@ -79,12 +79,13 @@ func (n *noteRepository) GetNoteByID(noteID string) (*entity.Note, error) {
 	return n.getOne(filter)
 }
 
-func (n *noteRepository) GetNotes() ([]*entity.Note, error) {
+// getNotes is a generic function that returns list of notes for a given filter.
+func (n *noteRepository) getNotes(filter bson.M) ([]*entity.Note, error) {
 	ctx, cancel := n.getContext()
 	defer cancel()
 
 	collection := n.getNoteCollection()
-	cursor, err := collection.Find(ctx, bson.M{"title": "twitch"})
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -100,6 +101,11 @@ func (n *noteRepository) GetNotes() ([]*entity.Note, error) {
 	}
 
 	return result, nil
+}
+
+func (n *noteRepository) GetCompletedNotes() ([]*entity.Note, error) {
+	filter := bson.M{"completed": true}
+	return n.getNotes(filter)
 }
 
 // updateOne is generic function to update one note
