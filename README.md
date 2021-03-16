@@ -20,7 +20,7 @@ The purpose of creating this sand-box is
 - **repository/mongo** - implementation of mongo client, CRUD ops on all entities, unit testing of all CRUD functions.
 
 ## A note on update operation
-If you have noticed `updateOne()`, instead of updating specific fields, the `updateOne()` function takes the complete updated entity and replaces it against a given matching parameter.
+If you have noticed, instead of updating specific fields, the `updateOne()` function takes the complete updated entity and replaces it against a given matching parameter.
 <br><br>
 This is useful as it
 - makes update operation consistent
