@@ -31,6 +31,51 @@ This is useful as it
 ## Using UUID instead of ObjectID.
 I have chosen to use UUID as slug instead of objectID as it is only native to Mongodb and adds lots of conversion and validation related code. Using UUID makes all this excess code disappear.
 
+## Testing on CI
+Following github action lints the source code and run unit tests.
+```yaml
+name: mongodb CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: rootpassword
+        ports:
+          - 27017:27017
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15
+
+      - name: install dependencies
+        run: |
+          make install
+          go get golang.org/x/lint/golint
+
+      - name: Lint code
+        run: |
+          make lint
+
+      - name: Test code
+        run: |
+          make test
+```
+
 ## Running tests parallelly
 ```go
 t.Parallel()
